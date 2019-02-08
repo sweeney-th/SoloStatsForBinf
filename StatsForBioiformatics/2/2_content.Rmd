@@ -1,0 +1,26 @@
+---
+title: "Content for Chapter 2"
+output: html_notebook
+---
+
+
+```{R}
+
+#install.packages(c("ape"),repo="http://cran.r-project.org",dep=TRUE)
+
+library(ape)
+
+table(read.GenBank(c("X94991.1"), as.character = TRUE))
+
+pie(table(read.GenBank(c("X94991.1"))))
+```
+
+
+
+```{r}
+
+data(golub, package = "multtest")
+gol.fac <- factor(golub.cl,levels=0:1, labels= c("ALL","AML"))
+stripchart(golub[1042,] ~ gol.fac, method="jitter")
+```
+

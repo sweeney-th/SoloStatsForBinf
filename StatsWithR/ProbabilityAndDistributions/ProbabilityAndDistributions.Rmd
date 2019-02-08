@@ -1,0 +1,116 @@
+---
+title: "StatsInR"
+output: html_document
+---
+
+*note: indented blocks are excerpts from the tezt*
+
+## Sampling & Probability
+
+```{R Random Sampling - No replacement}
+
+# pick random from 5 in a range of 1-40
+sample(1:40,5)
+```
+
+```{R Random Sampling - With Replacement}
+
+# pick random from 5 in a range of 1-40
+sample(c("Tails", "Heads"), 10, replace = TRUE)
+```
+
+
+```{R Random Sampling - With Replacement, Custom Odds}
+
+# pick random from 5 in a range of 1-40
+sample(c("Tails", "Heads"), 10, replace = TRUE, prob = c(0.9, 0.1))
+```
+
+
+The ways of getting a given 5 number combination with no replacement:
+```{R}
+
+1/choose(40,5)
+```
+
+### Discrete Distributions
+
+![](img/discrete.png)
+
+n and x are known as the binomial coefficients.
+
+## Continuous Distributions 
+
+### Definitions
+
+    In order to model continuous data, we need to define random variables
+    that can obtain the value of any real number. Because there are infinitely
+    many numbers infinitely close, the probability of any particular value will
+    be zero, so there is no such thing as a point probability as for discrete-
+    valued random variables. Instead we have the concept of a density. This is
+    the infinitesimal probability of hitting a small region around x divided by
+    the size of the region. The cumulative distribution function can be defined
+    as before, and we have the relation:
+
+
+![](img/continous.png)
+
+#### Uniform Distribution
+
+    The uniform distribution has a constant density over a specified interval (by
+    default [ 0, 1 ] ).
+    
+#### Normal Distribution
+
+The normal distribution follows a bell curve, the exact shape of which depends on the mean and standard deviation.
+
+![](img/normal.png)
+
+### Distributions in R
+
+    Four fundamental items can be calculated for a statistical distribution:
+        • Density or point probability
+        • Cumulated probability, distribution function
+        • Quantiles
+        • Pseudo-random numbers
+
+R has a function for each of these. Usng the normal distribution as an example, there is *dnorm* for density, *pnorm* fo cumulative probability, *qnorm* for quantiles, and *rnorm* for random.
+
+
+### Meaning of Density
+
+        The density for a continuous distribution is a measure of the relative prob-
+        ability of “getting a value close to x”. The probability of getting a value in
+        a particular interval is the area under the corresponding part of the curve.
+        
+```{R Visualization of Normal Distribution}
+
+curve(dnorm(x), from = -4, to = 4)
+```
+
+The vaule is continous and thus represented by the area under the curve. For discrete distributions, a histogram is more accurate:
+
+```{R Binomial Histogram}
+
+# sample size
+x <- 0:50
+
+# binomial with odds of .33/.66
+plot(x, dbinom(x, size = 50, prob = 0.33), type = "h")
+```
+
+
+### Cumulitive Distribution Functions
+
+These functions represent the chances of getting a value *or less* in the current distribution, for example, chances that x is 5 or lower. These are the functions in R that start with "p".
+
+    Say that it is known that some biochemical measure in healthy individuals is well described by a normal distribution with a mean of 132 and a standard deviation of 13.
+
+If a patient has a value of 160, what percent of the population has it?
+
+```{R Patient Value}
+
+# 100 minus the value of a 160 with given mean/sd
+1 - pnorm(160, mean = 132, sd = 13)
+```
+
