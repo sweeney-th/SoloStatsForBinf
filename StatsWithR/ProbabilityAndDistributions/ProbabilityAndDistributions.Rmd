@@ -1,6 +1,8 @@
 ---
 title: "StatsInR"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 *note: indented blocks are excerpts from the tezt*
@@ -163,3 +165,50 @@ x <- 1:20
 
 plot(x, dbinom(x, size = 20, prob = 0.50), type = "h")
 ```
+
+
+#### One vs. Two-tailed test
+
+The book is a little vague about 1 vs 2 tailed tests, but it's pretty clear when supplemented by wikipedia:
+
+    In statistical significance testing, a one-tailed test and a two-tailed test are alternative ways of computing the statistical significance of a parameter inferred from a data set, in terms of a test statistic. A two-tailed test is appropriate if the estimated value may be more than or less than the reference value, for example, whether a test taker may score above or below the historical average. A one-tailed test is appropriate if the estimated value may depart from the reference value in only one direction, for example, whether a machine produces more than one-percent defective products.
+
+## Quantiles
+
+    The quantile function is the inverse of the cumulative distribution function. The p-quantile is the value with the property that there is probability p of getting a value less than or equal to it. The median is by definition the 50% quantile.
+
+### Use in Confidence Intervals
+
+![](img/95ci.png)
+
+
+```{R Calculations of 95% Confidence Intervals}
+
+# the mean
+xbar <- 83
+
+# std deviation
+sigma <- 12
+
+# persons measured
+n <- 5
+
+# standsard error of the mean
+sem <- sigma/sqrt(n)
+
+# 2.5 below 95
+xbar + sem * qnorm(0.025)
+
+# 2.5 above 95
+xbar + sem * qnorm(0.975)
+```
+
+
+#### What does this confidence interval tell us?
+
+Supplementing with http://onlinestatbook.com/2/estimation/confidence.html:
+
+     If repeated samples were taken and the 95% confidence interval was computed for each sample, 95% of the intervals would contain the population mean.
+
+
+
