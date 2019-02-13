@@ -12,7 +12,7 @@ output:
 ```{R Random Sampling - No replacement}
 
 # pick random from 5 in a range of 1-40
-sample(1:40,5)
+sample(1:40, 5)
 ```
 
 ```{R Random Sampling - With Replacement}
@@ -30,7 +30,7 @@ sample(c("Tails", "Heads"), 10, replace = TRUE, prob = c(0.9, 0.1))
 
 
 The ways of getting a given 5 number combination with no replacement:
-```{R}
+```{R Choose}
 
 1/choose(40,5)
 ```
@@ -41,9 +41,9 @@ The ways of getting a given 5 number combination with no replacement:
 
 n and x are known as the binomial coefficients.
 
-## Continuous Distributions 
+### Continuous Distributions 
 
-### Definitions
+#### Definitions
 
     In order to model continuous data, we need to define random variables
     that can obtain the value of any real number. Because there are infinitely
@@ -68,7 +68,7 @@ The normal distribution follows a bell curve, the exact shape of which depends o
 
 ![](img/normal.png)
 
-### Distributions in R
+#### Distributions in R
 
     Four fundamental items can be calculated for a statistical distribution:
         • Density or point probability
@@ -253,3 +253,60 @@ A more no-nonsense approach, copied/trimmed from: https://www.mathbootcamps.com/
     Seems to make sense right? Get the confidence level as high as you can! Well, as the confidence level increases, the margin of error increases . That means the interval is wider. So, it may be that the interval is so large it is useless! For example, what if I said that I am 99% confident that you will score between a 10 and a 100 on your next exam? How useful is that in predicting your performance? The interval is simply too wide. There are some instances where it doesn’t matter as much, but that is on a case by case basis.
     
 This essentially stems from the fact we're trying to say sometihng about the *whole* population based on information about a *sample* of it. It's less confident than the charasmatic but false misconception in this example above.
+
+## Random Numbers
+
+Technically, theses are pseudo-random. There are numerous ways to get custom random sets in R.
+
+```{R Random Numbers}
+
+rnorm(10)
+```
+
+```{R custom mean/sd in normal}
+
+rnorm(10, mean = 7, sd = 5)
+```
+
+```{R binomial with various options}
+
+rbinom(10, size = 20, prob = 0.5)
+```
+
+
+## Excercises
+
+    3.1 Calculate the probability for each of the following events:
+    
+    (a) A standard normally distributed variable is larger than 3.
+    
+```{R a}
+
+ 1 - pnorm(3) 
+```
+
+    (b) A normally distributed variable with mean 35 and standard deviation 6 is larger than 42.
+ 
+```{R b}
+
+1 - pnorm(42, mean = 35, sd = 6)
+```
+
+    (c) Getting 10 out of 10 successes in a binomial distribution with probability 0.8.
+
+```{R c}
+
+dbinom(10, size = 10, prob = 0.8) # or >dbinom(0, size=10, prob=.2)
+```  
+
+    (d) X < 0.9 when X has the standard uniform distribution.
+
+```{R d}
+
+```  
+
+    (e) X > 6.5 in a χ^2 distribution with 2 degrees of freedom.
+
+```{R e}
+
+```   
