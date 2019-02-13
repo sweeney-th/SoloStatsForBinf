@@ -1,8 +1,8 @@
 ---
 title: "StatsInR"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 *note: indented blocks are excerpts from the tezt*
@@ -184,6 +184,7 @@ The book is a little vague about 1 vs 2 tailed tests, but it's pretty clear when
 
 ```{R Calculations of 95% Confidence Intervals}
 
+
 # the mean
 xbar <- 83
 
@@ -195,13 +196,30 @@ n <- 5
 
 # standsard error of the mean
 sem <- sigma/sqrt(n)
+```
 
-# 2.5 below 95
+We now get the +/-. The book glosses over this a bit, but these are a static value not related to the figures above. They are related to the fact we're looking for 95%, not, say 90%, so we use those quantiles (more below).
+
+```{R 95CI +/-}
+
+# lower range 
 xbar + sem * qnorm(0.025)
 
-# 2.5 above 95
+# upper range
 xbar + sem * qnorm(0.975)
 ```
+
+If we look closer we see the values for the qnorms:
+
+```{R Introspect}
+
+# what are these actually?
+qnorm(0.025)
+qnorm(0.975)
+```
+
+This makes it more clear they are the same value in either direction. This is often rounded to +/- 1.96. If we wan't a different % confidence interval, we would use a different value here:
+(https://www.dummies.com/education/math/statistics/how-to-calculate-a-confidence-interval-for-a-population-mean-when-you-know-its-standard-deviation/).
 
 
 #### What does this confidence interval tell us?
@@ -210,5 +228,28 @@ Supplementing with http://onlinestatbook.com/2/estimation/confidence.html:
 
      If repeated samples were taken and the 95% confidence interval was computed for each sample, 95% of the intervals would contain the population mean.
 
+A more no-nonsense approach, copied/trimmed from: https://www.mathbootcamps.com/interpreting-confidence-intervals/
 
+    Thinking About the Meaning of “95% Confident”
+    
+    Suppose that we have a sample of 45 people who work in a particular city. It took people in our sample an average time of 21 minutes to get to work one -way. The standard deviation was 9 minutes.
+    
+    Calculating a 95% confidence interval for the mean using a t-interval for the population mean, we get : (18.3, 23.7)
 
+    > FALSE: “95% of the 45 workers take between 18.3 and 23.7 minutes to get to work”.
+
+    While we used a sample to get the estimate, we are no longer talking about the sample. The confidence interval is now about ALL the workers that work in the city, not just the 45.
+    
+    > FALSE: “There is a 95% chance that the mean time it takes all workers in this city to get to work is between 18.3 and 23.7 minutes”.
+
+    This is a very common misconception! It seems very close to true, but it isn’t because the population mean value is fixed. So, it is either in the interval or not. This is subtle but important. 
+    
+    >What is correct?
+    
+    “We are 95% confident that the mean time it takes all workers in this city to get to work is between 18.3 and 23.7 minutes.” This is a common shorthand for the idea that the calculations “work” 95% of the time.
+    
+    Why Don’t We Always Use a 99% Confidence Level?
+    
+    Seems to make sense right? Get the confidence level as high as you can! Well, as the confidence level increases, the margin of error increases . That means the interval is wider. So, it may be that the interval is so large it is useless! For example, what if I said that I am 99% confident that you will score between a 10 and a 100 on your next exam? How useful is that in predicting your performance? The interval is simply too wide. There are some instances where it doesn’t matter as much, but that is on a case by case basis.
+    
+This essentially stems from the fact we're trying to say sometihng about the *whole* population based on information about a *sample* of it. It's less confident than the charasmatic but false misconception in this example above.

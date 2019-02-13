@@ -137,7 +137,7 @@
 \end{Shaded}
 
 \begin{verbatim}
-## [1] 20 34 12 35  9
+## [1] 20  4 31 35 34
 \end{verbatim}
 
 \begin{Shaded}
@@ -148,8 +148,8 @@
 \end{Shaded}
 
 \begin{verbatim}
-##  [1] "Heads" "Tails" "Tails" "Tails" "Tails" "Tails" "Heads" "Tails"
-##  [9] "Heads" "Heads"
+##  [1] "Heads" "Tails" "Heads" "Tails" "Tails" "Tails" "Heads" "Heads"
+##  [9] "Tails" "Heads"
 \end{verbatim}
 
 \begin{Shaded}
@@ -160,7 +160,7 @@
 \end{Shaded}
 
 \begin{verbatim}
-##  [1] "Tails" "Tails" "Tails" "Tails" "Tails" "Tails" "Heads" "Tails"
+##  [1] "Tails" "Tails" "Tails" "Tails" "Tails" "Tails" "Tails" "Tails"
 ##  [9] "Tails" "Tails"
 \end{verbatim}
 
@@ -229,10 +229,10 @@ depends on the mean and standard deviation.
 
 \begin{verbatim}
 Four fundamental items can be calculated for a statistical distribution:
-    â¢ Density or point probability
-    â¢ Cumulated probability, distribution function
-    â¢ Quantiles
-    â¢ Pseudo-random numbers
+    • Density or point probability
+    • Cumulated probability, distribution function
+    • Quantiles
+    • Pseudo-random numbers
 \end{verbatim}
 
 R has a function for each of these. Usng the normal distribution as an
@@ -243,7 +243,7 @@ probability, \emph{qnorm} for quantiles, and \emph{rnorm} for random.
 
 \begin{verbatim}
     The density for a continuous distribution is a measure of the relative prob-
-    ability of âgetting a value close to xâ. The probability of getting a value in
+    ability of “getting a value close to x”. The probability of getting a value in
     a particular interval is the area under the corresponding part of the curve.
     
 \end{verbatim}
@@ -401,12 +401,16 @@ Intervals}\label{use-in-confidence-intervals}
 \CommentTok{# the mean}
 \NormalTok{xbar <-}\StringTok{ }\DecValTok{83}
 
+\CommentTok{# std deviation}
 \NormalTok{sigma <-}\StringTok{ }\DecValTok{12}
 
+\CommentTok{# persons measured}
 \NormalTok{n <-}\StringTok{ }\DecValTok{5}
 
+\CommentTok{# standsard error of the mean}
 \NormalTok{sem <-}\StringTok{ }\NormalTok{sigma}\OperatorTok{/}\KeywordTok{sqrt}\NormalTok{(n)}
 
+\CommentTok{# 2.5 below 95}
 \NormalTok{xbar }\OperatorTok{+}\StringTok{ }\NormalTok{sem }\OperatorTok{*}\StringTok{ }\KeywordTok{qnorm}\NormalTok{(}\FloatTok{0.025}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
@@ -417,6 +421,7 @@ Intervals}\label{use-in-confidence-intervals}
 
 \begin{Shaded}
 \begin{Highlighting}[]
+\CommentTok{# 2.5 above 95}
 \NormalTok{xbar }\OperatorTok{+}\StringTok{ }\NormalTok{sem }\OperatorTok{*}\StringTok{ }\KeywordTok{qnorm}\NormalTok{(}\FloatTok{0.975}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
