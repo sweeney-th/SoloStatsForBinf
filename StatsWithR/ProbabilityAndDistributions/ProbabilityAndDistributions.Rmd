@@ -276,19 +276,23 @@ rbinom(10, size = 20, prob = 0.5)
 
 ## Excercises
 
-    3.1 Calculate the probability for each of the following events:
+### 3.1
+
+    Calculate the probability for each of the following events:
     
     (a) A standard normally distributed variable is larger than 3.
     
 ```{R a}
 
- 1 - pnorm(3) 
+# it's larger tham so subtract from 1
+1 - pnorm(3) 
 ```
 
     (b) A normally distributed variable with mean 35 and standard deviation 6 is larger than 42.
  
 ```{R b}
 
+# it's larger tham so subtract from 1
 1 - pnorm(42, mean = 35, sd = 6)
 ```
 
@@ -303,10 +307,35 @@ dbinom(10, size = 10, prob = 0.8) # or >dbinom(0, size=10, prob=.2)
 
 ```{R d}
 
+punif(0.9)
 ```  
+
+Dude this is the first time in the book that this an X^2 distribution is mentioned in the text is in this question, there is no content on this before this question. Wtf. I've seen it in other books before though.
 
     (e) X > 6.5 in a χ^2 distribution with 2 degrees of freedom.
 
 ```{R e}
 
+# mind the one 
+1 - pchisq(6.5, df = 2)
 ```   
+
+### 3.2
+
+    A rule of thumb is that 5% of the normal distribution lies outside an interval approximately ±2s about the mean. To what extent is this true? Where are the limits corresponding to 1%, 0.5%, and 0.1%? What is the position of the quartiles measured in standard deviation units?
+
+
+```{R}
+
+# I don't know why he does this
+pnorm(-2) * 2
+
+# I don't know why he divides by 2 and he doesn't explain
+qnorm(1 - .01 / 2)
+qnorm(1 - .005 / 2)
+qnorm(1 - .001 / 2)
+
+# I don't what what this is for
+qnorm(0.25)
+qnorm(0.75)
+```
