@@ -1,0 +1,90 @@
+---
+title: "Generative Models for Discrete Data.Rmd"
+output: html_document
+---
+
+    https://web.stanford.edu/class/bios221/book/Chap-Generative.html
+
+## Real Example - HIV
+
+    Let’s dive into a real example, where we know the probability model for the process. We are told that mutations along the genome of HIV (Human Immunodeficiency Virus) occur at random with a rate of 5×10−4 per nucleotide per replication cycle. This means that after one cycle, the number of mutations in a genome of about 10^4 = 10,000 nucleotides will follow a Poisson distribution (We will give more details later about this type of probability distribution. with rate 5). What does that tell us? This probability model predicts that the number of mutations over one replication cycle will be close to 5, and that the variability of this estimate is √5 (the standard error). We now have baseline reference values for both the number of mutations we expect to see in a typical HIV strain and its variability.
+
+    In fact, we can deduce even more detailed information. If we want to know how often 3 mutations could occur under the Poisson(5) model, we can use an R function to generate the probability of seeing x=3 events, taking the value of the rate parameter of the Poisson distribution, called lambda, to be 5.
+
+```{R Find Probability of Specific Value}
+
+# odds of excactly 3 instances in a piosson distribution with rate 5
+dpois(x = 3, lambda = 5)
+```
+
+```{R Finds Probabilities in a Range}
+
+# pass a range using :
+barplot(dpois(0:12, 5), names.arg = 0:12, col = "red")
+```
+
+
+The Poisson distribution is a good model for rare events such as mutations.
+
+## Using discrete probability models
+
+    A point mutation can either occur or not; it is a binary event. The two possible outcomes (yes, no) are called the levels of the categorical variable.
+    
+    Not all events are binary. For example, the genotypes in a diploid organism can take three levels (AA, Aa, aa).
+    
+    Sometimes the number of levels in a categorical variable is very large; examples include the number of different types of bacteria in a biological sample (hundreds or thousands) and the number of codons formed of 3 nucleotides (64 levels).
+    
+    When we measure a categorical variable on a sample, we often want to tally the frequencies of the different levels in a vector of counts. R has a special encoding for categorical variables and calls them factors. Here we capture the different blood genotypes for 19 subjects in a vector which we tabulate.
+    
+```{R Blood Types}
+
+# Blood types of 19 hypoethetical people
+genotype = c("AA","AO","BB","AO","OO","AO","AA","BO","BO",
+             "AO","BB","AO","BO","AB","OO","AB","BB","AO","AO")
+table(genotype)
+```
+
+    Tossing a coin has two possible outcomes. This simple experiment, called a Bernoulli trial, is modeled using a so-called Bernoulli random variable. Understanding this building block will take you surprisingly far. We can use it to build more complex models.
+    
+    Let’s try a few experiments to see what some of these random variables look like. We use special R functions tailored to generate outcomes for each type of distribution. They all start with the letter r, followed by a specification of the model, here rbinom, where binom is the abbreviation used for binomial.
+    
+    Suppose we want to simulate a sequence of 15 fair coin tosses. To get the outcome of 15 Bernoulli trials with a probability of success equal to 0.5 (a fair coin), we write
+    
+```{R Bernouli}
+
+# fair coin 
+rbinom(15, prob = 0.5, size = 1)
+```
+
+(Say a box has two sections, and the right is 2/3 of the box, the left, 1/3)
+
+
+```{R Emulate the Box}
+
+# emulate the 2/3 falling into the right of the box
+rbinom(15, prob = 2/3, size = 1)
+
+# to just get the number, not the vector of results:
+rbinom(1, prob = 2/3, size = 12)
+
+# probability mass distribution 
+probabilities = dbinom(0:15, prob = 0.3, size = 15)
+round(probabilities, 2)
+
+# we can plot it thusly
+barplot(probabilities, names.arg = 0:15, col = "blue")
+```
+
+## Poisson distributions
+
+    When the probability of success p is small and the number of trials n large, the binomial distribution B(n,p) can be faithfully approximated by a simpler distribution, the Poisson distribution with rate parameter lambda = np. We already used this fact, and this distribution, in the HIV example.
+    
+### Question 1.5
+
+        What is the probability mass distribution of observing 0:12 mutations in a genome of n=104 nucleotides, when the probability is p=5×10−4 per nuceotide? Is it similar when modeled by the binomial B(n,p) distribution and by the Poisson(λ=np) distribution?
+
+---
+    Note that, unlike the binomial distribution, the Poisson no longer depends on two separate parameters n and p, but only on their product np. As in the case of the binomial distribution, we also have a mathematical formula for computing Poisson probabilities.
+    
+    P(X=k) = lambda^k * e ^lambda/k!
+    
