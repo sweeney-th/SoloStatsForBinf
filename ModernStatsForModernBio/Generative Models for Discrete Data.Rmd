@@ -87,4 +87,23 @@ barplot(probabilities, names.arg = 0:15, col = "blue")
     Note that, unlike the binomial distribution, the Poisson no longer depends on two separate parameters n and p, but only on their product np. As in the case of the binomial distribution, we also have a mathematical formula for computing Poisson probabilities.
     
     P(X=k) = lambda^k * e ^lambda/k!
-    
+
+```{R Code for Piosson}
+
+# example - rate of 5, P(X=3) - will be like the first example
+5^3 * exp(-5) / factorial(3)
+```
+
+    Simulate a mutation process along 10,000 positions with a mutation rate of 5×10−4 and count the number of mutations. Repeat this many times and plot the distribution with the barplot function
+
+```{R Simulate Many Runs of Specified Example}
+
+rbinom(1, prob = 5e-4, size = 10000)
+
+simulations = rbinom(n = 300000, prob = 5e-4, size = 10000)
+barplot(table(simulations), col = "lavender")
+```
+
+
+## Generateive Model for Epitope Prediction
+
