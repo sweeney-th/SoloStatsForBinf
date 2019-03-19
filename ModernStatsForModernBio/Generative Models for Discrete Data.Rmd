@@ -107,4 +107,149 @@ barplot(table(simulations), col = "lavender")
 
 ## Generateive Model for Epitope Prediction
 
+Let's say we're a hypothetical elisa-based experiment.
 
+    The baseline noise level per position, or more precisely the false positive rate, is 1%. This is the probability of declaring a hit – we think we have an epitope – when there is none. We write this P( declare epitope | no epitope)
+    
+    The protein is tested at 100 different positions, supposed to be independent.
+    
+    We are going to examine a collection of 50 patient samples.
+    
+Each patients' results are presented as a vector of length 100 with a 0 being not hit and a 1 being a hit (and a potential for an allergic reaction).
+
+Our goal is:
+
+     Verify by simulation that the sum of 50 independent Bernoulli variables with p = 0.01 is –to good enough approximation– the same as a Poisson(0.5) random variable.
+
+We know that, due the false positive rate, there is a 1% chance a result is due to chance.
+
+```{R Get Data}
+
+# load it randomly into the namespace because we hate ourselves
+load("data/e100.RData")
+
+# plot the results of our simulated experiment
+barplot(e100, ylim = c(0, 7), width = 0.7, xlim = c(-0.5, 100.5),
+  names.arg = seq(along = e100), col = "darkolivegreen")
+```
+
+Obviously, we see the 7 right away. We'd like to ask ourselves what the odds are that we get such a result. It's tempting to ask what are the odds, given Piosson(0.5), that we get a 7, though the more appropriate question is what are the odds, given 100 repititions, that 7 is the maximum.
+
+The walkthrough of this is in my notebook. I will have to scan it. 
+
+The takeaway here is that we can calculate it in R explicity but are probably better off running a monte carlo simulation:
+
+```{R Monte Carlo Simulations for ELISA}
+
+set.seed(123)
+
+# run 100,000 simulations of a random piosson distribution of 100 values with l = 0.5
+maxes = replicate(100000, {
+  # find the max each time
+  max(rpois(100, 0.5))
+})
+
+# show a table of the max values
+table(maxes)
+
+
+```
+
+We see that the max was 7 or higher 10 times.
+
+```{R Find Odds}
+
+# we can find the answer thusly
+sum(maxes >=7)/length(maxes)
+
+# or we can use this shortcut getting 1s and 0s from the boolean vector
+# find the mean of the boolean vector'
+mean(maxes >= 7)
+```
+
+
+## Multinomial Dustributions
+
+With DNA, there are four normal nucleotides, ATCG. The odds still add up to the total, ie, pA+pT+pG+pC = 1. 
+
+### Q 1.7 
+
+    Suppose we have four boxes that are equally likely. Using the formula, what is the probability of observing 4 in the first box, 2 in the second box, and none in the two other boxes?
+    
+
+
+```{R Uniform Multinomial of 4}
+
+# 4 values with odds of 1/4 each
+pvec = rep(1/4, 4) #  0.25 0.25 0.25 0.25
+
+t(rmultinom(1, prob = pvec, size = 8))
+```
+
+
+### Question 1.9
+
+How do you interpret the difference between rmultinom(n = 8, prob = pvec, size = 1) and rmultinom(n = 1, prob = pvec, size = 8)? Hint: remember what we did in Sections 1.3.1 and 1.3.2.
+
+```{R Difference in n}
+
+# this has 1 trials of 1/4 8 times
+rmultinom(n = 8, prob = pvec, size = 1)
+
+# this has 8 trials of 1/4 once
+rmultinom(n = 1, prob = pvec, size = 8)
+```
+
+## 1.4.1 Simulating for Power
+
+    Let’s see an example of using Monte Carlo for the multinomial in a way which is related to a problem scientists often have to solve when planning their experiments: how big a sample size do I need?
+    
+    The term power has a special meaning in statistics. It is the probability of detecting something if it is there, also called the true positive rate.
+    
+    Conventionally, experimentalists aim for a power of 80% (or more) when planning experiments. This means that if the same experiment is run many times, about 20% of the time it will fail to yield significant results even though it should.
+    
+    Let’s call H0 the null hypothesis that the DNA data we have collected comes from a fair process, where each of the 4 nucleotides is equally likely
+    
+    Let’s call H0 the null hypothesis that the DNA data we have collected comes from a fair process, where each of the 4 nucleotides is equally likely (pA,pC,pG,pT)=(0.25,0.25,0.25,0.25). Null here just means: the baseline, where nothing interesting is going on. It’s the strawman that we are trying to disprove (or “reject”, in the lingo of statisticians), so the null hypothesis should be such that deviations from it are interesting.
+    
+    As you saw by running the R commands for 8 characters and 4 equally likely outcomes, represented by equal-sized boxes, we do not always get 2 in each box. It is impossible to say, from looking at just 8 characters, whether the nucleotides come from a fair process or not.
+    
+    Let’s determine if, by looking at a sequence of length n=20, we can detect whether the original distribution of nucleotides is fair or whether it comes from some other (“alternative”) process.
+    
+    We generate 1000 simulations from the null hypothesis using the rmultinom function. We display only the first 11 columns to save space.
+    
+```{R 1000 Null Hypothesis}
+
+
+obsunder0 = rmultinom(1000, prob = pvec, size = 20)
+
+dim(obsunder0)
+
+obsunder0[, 1:11]
+```
+
+### Creating a test (normal variation)
+
+    Remember: we know these values come from a fair process. Clearly, knowing the process’ expected values isn’t enough. We also need a measure of variability that will enable us to describe how much variability is expected and how much is too much. We use as our measure the following statistic, which is computed as the sum of the squares of the differences between the observed values and the expected values relative to the expected values. Thus, for each instance, 
+
+\begin{equation}
+{\tt stat}=\frac{(E_A-x_A)^2}{E_A}+
+\frac{(E_C-x_C)^2}{E_C}+
+\frac{(E_G-x_G)^2}{E_G}+
+\frac{(E_T-x_T)^2}{E_T}
+=\sum_i\frac{(E_i-x_i)^2}{E_i}
+\tag{1.1}
+\end{equation}
+
+    How much do the first three columns of the generated data differ from what we expect? 
+
+```{R Variablity in the first 3 columns}
+
+expected0 = pvec * 20
+
+sum((obsunder0[, 1] - expected0)^2 / expected0)
+
+sum((obsunder0[, 2] - expected0)^2 / expected0)
+
+sum((obsunder0[, 3] - expected0)^2 / expected0)
+```
