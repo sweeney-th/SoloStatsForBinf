@@ -1,0 +1,72 @@
+---
+title: "CreatingATest"
+output: html_document
+---
+
+    Let’s call H0 the null hypothesis that the DNA data we have collected comes from a fair process, where each of the 4 nucleotides is equally likely. Let’s determine if, by looking at a sequence of length n = 20, we can detect whether the original distribution of nucleotides is fair or whether it comes from some other (“alternative”) process.
+
+```{R Create Null Observations}
+
+# set seed for reproducability
+set.seed(8675309)
+
+# assuming 25% for each of 4 outcomes: 0.25 0.25 0.25 0.25
+evenDistribution <- rep(1/4, 4)
+
+# a simulation of 1000 observations to be our null hypothesis
+nullObservations <- rmultinom(1000, prob = evenDistribution, size = 20)
+
+# observed every row in the first 10 column,
+nullObservations[, 1:10]
+```
+
+Every column adds up to 20 observations of an event, simulating a sequence of 20 with a fair distribution of nucleotides.
+
+    You can see that the numbers in the boxes vary a lot: some are as big as 8, whereas the expected value is 5 = 20/4.
+    
+    Remember: we know these values come from a fair process. Clearly, knowing the process’ expected values isn’t enough. We also need a measure of variability that will enable us to describe how much variability is expected and how much is too much. We use as our measure the following statistic, which is computed as the sum of the squares of the differences between the observed values and the expected values relative to the expected values. Thus, for each instance, 
+
+\begin{equation}
+{\tt stat}=\frac{(E_A-x_A)^2}{E_A}+
+\frac{(E_C-x_C)^2}{E_C}+
+\frac{(E_G-x_G)^2}{E_G}+
+\frac{(E_T-x_T)^2}{E_T}
+=\sum_i\frac{(E_i-x_i)^2}{E_i}
+\tag{1.1}
+\end{equation}
+
+    How much do the first three columns of the generated data differ from what we expect? We get:
+    
+```{R Variation in the first 3 observations ("sequences")}
+
+# 20 comes from the sample size, yields 5, 5, 5, 5
+expectedValues = evenDistribution * 20
+
+# frist 
+sum((nullObservations[, 1] - expectedValues)^2 / expectedValues)
+
+# second 
+sum((nullObservations[, 2] - expectedValues)^2 / expectedValues)
+
+# third
+sum((nullObservations[, 3] - expectedValues)^2 / expectedValues)
+```
+
+Let's take a look under the hood of one of these to make sure we fully digest the formula. 
+
+We know nullObservations[, 1] is (3, 6, 7, 4).
+
+We're subtracting those from the expected values (5, 5, 5, 5).
+
+This gives us (-2, 1, 2, -1). We square the result of this, giving us (4, 1, 4, 1).
+
+We then divide the by the expected values, (5, 5, 5, 5), giving us (0.8, 0.2, 0.8, 0.2).
+
+The final step is the sumation, giving us 2.
+
+```{R Under The Hood of one calculation}
+ 
+nullObservations[, 1] # 3 6 7 4
+expectedValues # 5 5 5 5
+
+```

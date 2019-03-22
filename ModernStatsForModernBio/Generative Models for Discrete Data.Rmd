@@ -5,6 +5,12 @@ output: html_document
 
     https://web.stanford.edu/class/bios221/book/Chap-Generative.html
 
+```{R}
+
+set.seed(235569515)
+```
+
+
 ## Real Example - HIV
 
     Let’s dive into a real example, where we know the probability model for the process. We are told that mutations along the genome of HIV (Human Immunodeficiency Virus) occur at random with a rate of 5×10−4 per nucleotide per replication cycle. This means that after one cycle, the number of mutations in a genome of about 10^4 = 10,000 nucleotides will follow a Poisson distribution (We will give more details later about this type of probability distribution. with rate 5). What does that tell us? This probability model predicts that the number of mutations over one replication cycle will be close to 5, and that the variability of this estimate is √5 (the standard error). We now have baseline reference values for both the number of mutations we expect to see in a typical HIV strain and its variability.
@@ -243,13 +249,67 @@ obsunder0[, 1:11]
 
     How much do the first three columns of the generated data differ from what we expect? 
 
-```{R Variablity in the first 3 columns}
+```{R Variablity in the columns}
 
+# 20 observations
 expected0 = pvec * 20
 
+# explicitly see the first 3 columns
 sum((obsunder0[, 1] - expected0)^2 / expected0)
 
 sum((obsunder0[, 2] - expected0)^2 / expected0)
 
 sum((obsunder0[, 3] - expected0)^2 / expected0)
+
+# a function to calculate on all of them
+stat = function(obsvd, exptd = 20 * pvec) {
+  sum((obsvd - exptd)^2 / exptd)
+}
+stat(obsunder0[, 1])
 ```
+
+    To get a more complete picture of this variation, we compute the measure for all 1000 instances and store these values in a vector we call S0: it contains values generated under H0. We can consider the histogram of the S0 values shown in Figure 1.10 an estimate of our null distribution.
+    
+```{R Visualize}
+
+S0 = apply(obsunder0, 2, stat)
+
+head(S0)
+
+summary(S0)
+
+hist(S0, breaks = 25, col = "lavender", main = "")
+```
+
+Apply quantiles to the data
+
+```{R Quantiles}
+
+q95 = quantile(S0, probs = 0.95)
+q95
+```
+
+    So we see that 5% of the S0 values are larger than 7.6. We’ll propose this as our critical value for testing data and will reject the hypothesis that the data come from a fair process, with equally likely nucleotides, if the weighted sum of squares stat is larger than 7.6.
+    
+#### Determining our test’s power
+
+    We must compute the probability that our test –based on the weighted sum-of-square differences– will detect that the data in fact do not come from the null hypothesis. We compute the probability of rejecting by simulation. We generate 1000 simulated instances from an alternative process, parameterized by pvecA.
+    
+```{R Alternative Process to Compare Our Test To}
+
+pvecA = c(3/8, 1/4, 3/12, 1/8) # randomly chosen I think?
+
+# run the test again
+observed = rmultinom(1000, prob = pvecA, size = 20)
+
+# apply our variance function
+S1 = apply(observed, 2, stat)
+
+# which are higher than the 95th (of the previous test???)
+sum(S1 > q95)
+
+power = mean(S1 > q95)
+power
+```
+
+
